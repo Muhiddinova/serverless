@@ -69,6 +69,14 @@ Use this to quickly upload and overwrite your AWS Lambda code on AWS, allowing y
 serverless deploy function -f hello
 ```
 
+### Instrument A Service:
+
+Use [Serverless Console](https://www.serverless.com/console/docs) to get real-time metrics and payloads in a secure, collaborative, observability dashboard.
+
+```bash
+serverless --console
+```
+
 ### Invoke The Function On AWS:
 
 Invokes an AWS Lambda Function on AWS and returns logs.

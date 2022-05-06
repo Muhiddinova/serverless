@@ -108,7 +108,7 @@ describe('test/unit/lib/cli/interactive-setup/dashboard-login.test.js', function
       confirm: { shouldLoginOrRegister: true },
     });
     const loginStep = proxyquire('../../../../../lib/cli/interactive-setup/dashboard-login', {
-      '@serverless/dashboard-plugin/lib/login': loginStub,
+      '../../../commands/login': loginStub,
       '@serverless/platform-client': {
         ServerlessSDK: ServerlessSDKMock,
       },
@@ -131,7 +131,7 @@ describe('test/unit/lib/cli/interactive-setup/dashboard-login.test.js', function
 
   it('Should login and skip question when user providers `org` option', async () => {
     const loginStep = proxyquire('../../../../../lib/cli/interactive-setup/dashboard-login', {
-      '@serverless/dashboard-plugin/lib/login': loginStub,
+      '../../../commands/login': loginStub,
       '@serverless/platform-client': {
         ServerlessSDK: ServerlessSDKMock,
       },
@@ -151,7 +151,7 @@ describe('test/unit/lib/cli/interactive-setup/dashboard-login.test.js', function
 
   it('Should login and skip question when `org` configured', async () => {
     const loginStep = proxyquire('../../../../../lib/cli/interactive-setup/dashboard-login', {
-      '@serverless/dashboard-plugin/lib/login': loginStub,
+      '../../../commands/login': loginStub,
       '@serverless/platform-client': {
         ServerlessSDK: ServerlessSDKMock,
       },
@@ -174,7 +174,7 @@ describe('test/unit/lib/cli/interactive-setup/dashboard-login.test.js', function
       confirm: { shouldLoginOrRegister: false },
     });
     const loginStep = proxyquire('../../../../../lib/cli/interactive-setup/dashboard-login', {
-      '@serverless/dashboard-plugin/lib/login': loginStub,
+      '../../../commands/login': loginStub,
       '@serverless/platform-client': {
         ServerlessSDK: ServerlessSDKMock,
       },

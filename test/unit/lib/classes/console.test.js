@@ -8,7 +8,6 @@ const _ = require('lodash');
 const fetch = require('node-fetch');
 const log = require('log').get('serverless:test');
 const runServerless = require('../../../utils/run-serverless');
-const getRequire = require('../../../../lib/utils/get-require');
 
 // Configure chai
 chai.use(require('chai-as-promised'));
@@ -130,12 +129,6 @@ const createAwsRequestStubMap = () => ({
   },
 });
 
-const ServerlessSDKMock = class ServerlessSDK {
-  async getOrgByName(orgName) {
-    return { orgUid: `${orgName}id` };
-  }
-};
-
 describe('test/unit/lib/classes/console.test.js', () => {
   describe('enabled', () => {
     describe('deploy', () => {
@@ -161,11 +154,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
           command: 'deploy',
           lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
           configExt: { console: true, org: 'testorg' },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
           awsRequestStubMap,
@@ -252,11 +244,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             },
             org: 'testorg',
           },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
         });
@@ -295,13 +286,12 @@ describe('test/unit/lib/classes/console.test.js', () => {
             functions: { layerFunc: { layers: null }, capitalLayerFunc: { layers: null } },
           },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
           awsRequestStubMap: createAwsRequestStubMap(),
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
         });
 
         const configuredLayers =
@@ -325,13 +315,12 @@ describe('test/unit/lib/classes/console.test.js', () => {
             org: 'testorg',
           },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
           awsRequestStubMap: createAwsRequestStubMap(),
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
         });
 
         const fnVariables =
@@ -353,11 +342,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
           fixture: 'function',
           command: 'package',
           configExt: { console: true, org: 'testorg', provider: { deploymentBucket: 'custom' } },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
         }));
@@ -393,11 +381,9 @@ describe('test/unit/lib/classes/console.test.js', () => {
         command: 'package',
         options: { package: 'package-dir' },
         configExt: { console: true, org: 'testorg' },
-        env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+        env: { SLS_ORG_TOKEN: 'dummy' },
         modulesCacheStub: {
-          [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-            '@serverless/platform-client'
-          )]: { ServerlessSDK: ServerlessSDKMock },
+          [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) => `${orgName}id`,
           [require.resolve('node-fetch')]: fetchStub,
         },
       }));
@@ -413,11 +399,9 @@ describe('test/unit/lib/classes/console.test.js', () => {
         lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
         options: { package: 'package-dir' },
         configExt: { console: true, org: 'testorg' },
-        env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+        env: { SLS_ORG_TOKEN: 'dummy' },
         modulesCacheStub: {
-          [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-            '@serverless/platform-client'
-          )]: { ServerlessSDK: ServerlessSDKMock },
+          [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) => `${orgName}id`,
           [require.resolve('node-fetch')]: fetchStub,
         },
         awsRequestStubMap,
@@ -459,11 +443,9 @@ describe('test/unit/lib/classes/console.test.js', () => {
         command: 'deploy function',
         options: { function: 'basic' },
         configExt: { console: true, org: 'testorg' },
-        env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+        env: { SLS_ORG_TOKEN: 'dummy' },
         modulesCacheStub: {
-          [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-            '@serverless/platform-client'
-          )]: { ServerlessSDK: ServerlessSDKMock },
+          [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) => `${orgName}id`,
           [require.resolve('node-fetch')]: fetchStub,
         },
         awsRequestStubMap: {
@@ -518,11 +500,9 @@ describe('test/unit/lib/classes/console.test.js', () => {
         command: 'rollback',
         options: { timestamp: '2020-05-20T15:31:44.359Z' },
         configExt: { console: true, org: 'testorg' },
-        env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+        env: { SLS_ORG_TOKEN: 'dummy' },
         modulesCacheStub: {
-          [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-            '@serverless/platform-client'
-          )]: { ServerlessSDK: ServerlessSDKMock },
+          [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) => `${orgName}id`,
           [require.resolve('node-fetch')]: fetchStub,
         },
         awsRequestStubMap: {
@@ -593,11 +573,9 @@ describe('test/unit/lib/classes/console.test.js', () => {
         fixture: 'function',
         command: 'remove',
         configExt: { console: true, org: 'testorg' },
-        env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+        env: { SLS_ORG_TOKEN: 'dummy' },
         modulesCacheStub: {
-          [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-            '@serverless/platform-client'
-          )]: { ServerlessSDK: ServerlessSDKMock },
+          [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) => `${orgName}id`,
           [require.resolve('node-fetch')]: fetchStub,
         },
         awsRequestStubMap: {
@@ -672,13 +650,12 @@ describe('test/unit/lib/classes/console.test.js', () => {
             },
           },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
           awsRequestStubMap: createAwsRequestStubMap(),
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
         })
       ).to.eventually.be.rejected.and.have.property('code', 'TOO_MANY_LAYERS_TO_SETUP_CONSOLE');
     });
@@ -695,11 +672,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
           command: 'package',
           options: { package: 'package-dir' },
           configExt: { console: true, org: 'testorg' },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
           awsRequestStubMap: createAwsRequestStubMap(),
@@ -715,13 +691,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { package: 'package-dir' },
             configExt: { console: true, org: 'testorg' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: {
-                ServerlessSDK: ServerlessSDKMock,
-              },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: createAwsRequestStubMap(),
@@ -741,11 +714,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
           command: 'package',
           options: { package: 'package-dir' },
           configExt: { console: true, org: 'other' },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
         });
@@ -758,13 +730,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             command: 'deploy',
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { package: 'package-dir' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: {
-                ServerlessSDK: ServerlessSDKMock,
-              },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: createAwsRequestStubMap(),
@@ -784,11 +753,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
           command: 'package',
           options: { package: 'package-dir' },
           configExt: { console: true, org: 'testorg' },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
         });
@@ -801,13 +769,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             command: 'deploy',
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { package: 'package-dir' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: {
-                ServerlessSDK: ServerlessSDKMock,
-              },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: createAwsRequestStubMap(),
@@ -827,11 +792,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
           command: 'package',
           options: { package: 'package-dir' },
           configExt: { console: true, org: 'testorg' },
-          env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+          env: { SLS_ORG_TOKEN: 'dummy' },
           modulesCacheStub: {
-            [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-              '@serverless/platform-client'
-            )]: { ServerlessSDK: ServerlessSDKMock },
+            [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+              `${orgName}id`,
             [require.resolve('node-fetch')]: fetchStub,
           },
         });
@@ -846,13 +810,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             command: 'deploy',
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { package: 'package-dir' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: {
-                ServerlessSDK: ServerlessSDKMock,
-              },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: createAwsRequestStubMap(),
@@ -874,11 +835,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { timestamp: '2020-05-20T15:31:44.359Z' },
             configExt: { console: true, org: 'testorg' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: { ServerlessSDK: ServerlessSDKMock },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: {
@@ -946,11 +906,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { timestamp: '2020-05-20T15:31:44.359Z' },
             configExt: { console: true, org: 'testorg' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: { ServerlessSDK: ServerlessSDKMock },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: {
@@ -1015,11 +974,10 @@ describe('test/unit/lib/classes/console.test.js', () => {
             command: 'rollback',
             lastLifecycleHookName: 'aws:deploy:deploy:uploadArtifacts',
             options: { timestamp: '2020-05-20T15:31:44.359Z' },
-            env: { SERVERLESS_ACCESS_KEY: 'dummy' },
+            env: { SLS_ORG_TOKEN: 'dummy' },
             modulesCacheStub: {
-              [getRequire(path.dirname(require.resolve('@serverless/dashboard-plugin'))).resolve(
-                '@serverless/platform-client'
-              )]: { ServerlessSDK: ServerlessSDKMock },
+              [require.resolve('@serverless/utils/auth/get-org-id')]: async (orgName) =>
+                `${orgName}id`,
               [require.resolve('node-fetch')]: fetchStub,
             },
             awsRequestStubMap: {
